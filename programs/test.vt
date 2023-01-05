@@ -1,0 +1,9 @@
+@begin
+    mov $r2 5
+    mov $r1 20
+@begin_loop
+    add $r1 1
+    sub $r2 1
+    jeq @begin_loop $r2
+    mov $r0 $r1
+    

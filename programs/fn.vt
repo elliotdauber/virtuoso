@@ -1,0 +1,15 @@
+@add2
+    add $r0 12
+    ret
+
+@add
+    add $r0 $r1
+    push $ra
+    jal @add2
+    pop $ra
+    ret
+
+@main
+    mov $r0 10
+    mov $r1 7
+    jal @add

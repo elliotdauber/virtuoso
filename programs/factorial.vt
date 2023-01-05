@@ -1,0 +1,15 @@
+@factorial
+    mul $r0 $r1
+    sub $r1 1
+    jeq @return_from_factorial $r1
+    push $ra
+    jal @factorial
+    pop $ra
+@return_from_factorial
+    ret
+
+@main
+    mov $r0 1
+    mov $r1 6
+    jal @factorial
+    pnt $r0
