@@ -18,7 +18,7 @@ class BinMathInstr : public IInstr {
 public:
     BinMathInstr(IArg *arg1, IArg *arg2);
     void execute(ExecutionContext &context) override;
-    virtual int operate(int val1, int val2) = 0;
+    virtual reg_t operate(reg_t val1, reg_t val2) = 0;
 private:
     IArg *arg1, *arg2;
 };
@@ -26,25 +26,25 @@ private:
 class AddInstr : public BinMathInstr {
 public:
     AddInstr(IArg *arg1, IArg *arg2);
-    int operate(int val1, int val2) override;
+    reg_t operate(reg_t val1, reg_t val2) override;
 };
 
 class SubInstr : public BinMathInstr {
 public:
     SubInstr(IArg *arg1, IArg *arg2);
-    int operate(int val1, int val2) override;
+    reg_t operate(reg_t val1, reg_t val2) override;
 };
 
 class MulInstr : public BinMathInstr {
 public:
     MulInstr(IArg *arg1, IArg *arg2);
-    int operate(int val1, int val2) override;
+    reg_t operate(reg_t val1, reg_t val2) override;
 };
 
 class DivInstr : public BinMathInstr {
 public:
     DivInstr(IArg *arg1, IArg *arg2);
-    int operate(int val1, int val2) override;
+    reg_t operate(reg_t val1, reg_t val2) override;
 };
 
 class MovInstr : public IInstr {
@@ -67,7 +67,7 @@ class CondJmpInstr : public IInstr {
 public:
     CondJmpInstr(IArg *label, IArg *cond);
     void execute(ExecutionContext &context) override;
-    virtual bool compare_with_zero(int val) = 0;
+    virtual bool compare_with_zero(reg_t val) = 0;
 private:
     IArg *label, *cond;
 };
@@ -75,19 +75,19 @@ private:
 class JeqInstr : public CondJmpInstr {
 public: 
     JeqInstr(IArg *label, IArg *cond);
-    bool compare_with_zero(int val) override;
+    bool compare_with_zero(reg_t val) override;
 };
 
 class JltInstr : public CondJmpInstr {
 public: 
     JltInstr(IArg *label, IArg *cond);
-    bool compare_with_zero(int val) override;
+    bool compare_with_zero(reg_t val) override;
 };
 
 class JgtInstr : public CondJmpInstr {
 public: 
     JgtInstr(IArg *label, IArg *cond);
-    bool compare_with_zero(int val) override;
+    bool compare_with_zero(reg_t val) override;
 };
 
 class PushInstr : public IInstr {
@@ -126,6 +126,46 @@ public:
     void execute(ExecutionContext &context) override;
 private:
     IArg *arg;
+};
+
+class PrintHexInstr : public IInstr {
+public: 
+    PrintHexInstr(IArg *arg);
+    void execute(ExecutionContext &context) override;
+private:
+    IArg *arg;
+};
+
+class LoadInstr : public IInstr {
+public: 
+    LoadInstr(IArg *dst, IArg *src);
+    void execute(ExecutionContext &context) override;
+private:
+    IArg *dst, *src;
+};
+
+class StoreInstr : public IInstr {
+public: 
+    StoreInstr(IArg *dst, IArg *src);
+    void execute(ExecutionContext &context) override;
+private:
+    IArg *dst, *src;
+};
+
+class StoreByteInstr : public IInstr {
+public: 
+    StoreByteInstr(IArg *dst, IArg *src);
+    void execute(ExecutionContext &context) override;
+private:
+    IArg *dst, *src;
+};
+
+class NewInstr : public IInstr {
+public: 
+    NewInstr(IArg *dst, IArg *nbytes);
+    void execute(ExecutionContext &context) override;
+private:
+    IArg *dst, *nbytes;
 };
 
 class InstrFactory {

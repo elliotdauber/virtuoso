@@ -1,0 +1,16 @@
+@main
+    new $r0 16
+    mov *r0 99
+
+    mov $r1 $r0
+    add $r1 8
+    mov *r1 123
+
+    pntx $r0
+    pnt *r0
+
+    pntx $r1
+    pnt *r1
+
+    add *r1 *r0
+    pnt *r1

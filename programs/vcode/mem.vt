@@ -1,0 +1,14 @@
+@fn
+    load $r1 *r0
+    pnt $r1
+    pntx $r0
+    mul $r1 $r1
+    store *r0 $r1
+    ret
+
+@main
+    new $r0 8
+    add *r0 5
+    pnt *r0
+    jal @fn
+    pnt *r0

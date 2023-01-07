@@ -8,24 +8,33 @@ using namespace std;
 
 class IArg {
 public:
-    virtual int get_val(ExecutionContext &context) = 0;
-    virtual void put_val(ExecutionContext &context, int val) = 0; 
+    virtual reg_t get_val(ExecutionContext &context) = 0;
+    virtual void put_val(ExecutionContext &context, reg_t val) = 0; 
 };
 
 class Constant : public IArg {
 public:
-    Constant(int val);
-    int get_val(ExecutionContext &context) override;
-    void put_val(ExecutionContext &context, int val) override;
+    Constant(reg_t val);
+    reg_t get_val(ExecutionContext &context) override;
+    void put_val(ExecutionContext &context, reg_t val) override;
 private:
-    int val;
+    reg_t val;
 };
 
 class Register : public IArg {
 public:
     Register(string reg);
-    int get_val(ExecutionContext &context) override;
-    void put_val(ExecutionContext &context, int val) override;
+    reg_t get_val(ExecutionContext &context) override;
+    void put_val(ExecutionContext &context, reg_t val) override;
+private:
+    string reg;
+};
+
+class PointerRegister : public IArg {
+public:
+    PointerRegister(string reg);
+    reg_t get_val(ExecutionContext &context) override;
+    void put_val(ExecutionContext &context, reg_t val) override;
 private:
     string reg;
 };
@@ -33,16 +42,16 @@ private:
 class Label : public IArg {
 public:
     Label(string label);
-    int get_val(ExecutionContext &context) override;
-    void put_val(ExecutionContext &context, int val) override;
+    reg_t get_val(ExecutionContext &context) override;
+    void put_val(ExecutionContext &context, reg_t val) override;
 private:
     string label;
 };
 
 class NullArg : public IArg {
 public:
-    int get_val(ExecutionContext &context) override;
-    void put_val(ExecutionContext &context, int val) override;
+    reg_t get_val(ExecutionContext &context) override;
+    void put_val(ExecutionContext &context, reg_t val) override;
 };
 
 class ArgFactory {

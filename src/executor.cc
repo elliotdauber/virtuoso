@@ -8,6 +8,7 @@ void Executor::execute(Program& program) {
 
     string start = "main";
     context.set_pc(context.get_lineno(start));
+    context.set_ra(-1);
 
     while (true) {
         IInstr *instr = (program.get_instr(context.get_pc()));

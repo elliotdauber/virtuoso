@@ -6,28 +6,28 @@
 
 BinMathInstr::BinMathInstr(IArg *arg1, IArg *arg2) : arg1(arg1), arg2(arg2) {}
 void BinMathInstr::execute(ExecutionContext &context) {
-    int val = operate(arg1->get_val(context), arg2->get_val(context));
+    reg_t val = operate(arg1->get_val(context), arg2->get_val(context));
     arg1->put_val(context, val);
     context.inc_pc();
 }
 
 AddInstr::AddInstr(IArg *arg1, IArg *arg2) : BinMathInstr(arg1, arg2) {}
-int AddInstr::operate(int val1, int val2) {
+reg_t AddInstr::operate(reg_t val1, reg_t val2) {
     return val1 + val2;
 }
 
 SubInstr::SubInstr(IArg *arg1, IArg *arg2) : BinMathInstr(arg1, arg2) {}
-int SubInstr::operate(int val1, int val2) {
+reg_t SubInstr::operate(reg_t val1, reg_t val2) {
     return val1 - val2;
 }
 
 MulInstr::MulInstr(IArg *arg1, IArg *arg2) : BinMathInstr(arg1, arg2) {}
-int MulInstr::operate(int val1, int val2) {
+reg_t MulInstr::operate(reg_t val1, reg_t val2) {
     return val1 * val2;
 }
 
 DivInstr::DivInstr(IArg *arg1, IArg *arg2) : BinMathInstr(arg1, arg2) {}
-int DivInstr::operate(int val1, int val2) {
+reg_t DivInstr::operate(reg_t val1, reg_t val2) {
     //TODO: what to do if val2 == 0?
     return val1 / val2;
 }
@@ -58,17 +58,17 @@ void CondJmpInstr::execute(ExecutionContext &context) {
 }
 
 JeqInstr::JeqInstr(IArg *label, IArg *cond) : CondJmpInstr(label, cond) {}
-bool JeqInstr::compare_with_zero(int val) {
+bool JeqInstr::compare_with_zero(reg_t val) {
     return val == 0;
 }
 
 JltInstr::JltInstr(IArg *label, IArg *cond) : CondJmpInstr(label, cond) {}
-bool JltInstr::compare_with_zero(int val) {
+bool JltInstr::compare_with_zero(reg_t val) {
     return val < 0;
 }
 
 JgtInstr::JgtInstr(IArg *label, IArg *cond) : CondJmpInstr(label, cond) {}
-bool JgtInstr::compare_with_zero(int val) {
+bool JgtInstr::compare_with_zero(reg_t val) {
     return val > 0;
 }
 
@@ -105,6 +105,50 @@ void PrintInstr::execute(ExecutionContext &context) {
     context.inc_pc();
 }
 
+PrintHexInstr::PrintHexInstr(IArg *arg) : arg(arg) {}
+void PrintHexInstr::execute(ExecutionContext &context) {
+    cout << "0x" << hex << arg->get_val(context) << dec << endl;
+    context.inc_pc();
+}
+
+
+LoadInstr::LoadInstr(IArg *dst, IArg *src) : dst(dst), src(src) {}
+void LoadInstr::execute(ExecutionContext &context) {
+    dst->put_val(
+        context,
+        src->get_val(context)
+    );
+    context.inc_pc();
+}
+
+StoreInstr::StoreInstr(IArg *dst, IArg *src) : dst(dst), src(src) {}
+void StoreInstr::execute(ExecutionContext &context) {
+    dst->put_val(
+        context,
+        src->get_val(context)
+    );
+    context.inc_pc();
+}
+
+//TODO:
+StoreByteInstr::StoreByteInstr(IArg *dst, IArg *src) : dst(dst), src(src) {}
+void StoreByteInstr::execute(ExecutionContext &context) {
+    dst->put_val(
+        context,
+        src->get_val(context)
+    );
+    context.inc_pc();
+}
+
+NewInstr::NewInstr(IArg *dst, IArg *nbytes) : dst(dst), nbytes(nbytes) {}
+void NewInstr::execute(ExecutionContext &context) {
+    dst->put_val(
+        context,
+        (reg_t)calloc(nbytes->get_val(context), sizeof(char))
+    );
+    context.inc_pc();
+}
+
 IInstr *InstrFactory::create(string& text) {
     vector<string> tokens = StringLib::tokenize(text);
     if (tokens.size() == 0) return nullptr;
@@ -129,6 +173,10 @@ IInstr *InstrFactory::create(string& text) {
     if (instr_type == "jal") return new JalInstr(args[0]);
     if (instr_type == "ret") return new RetInstr();
     if (instr_type == "pnt") return new PrintInstr(args[0]);
+    if (instr_type == "pntx") return new PrintHexInstr(args[0]);
+    if (instr_type == "load") return new LoadInstr(args[0], args[1]);
+    if (instr_type == "store") return new StoreInstr(args[0], args[1]);
+    if (instr_type == "new") return new NewInstr(args[0], args[1]);
 
     return nullptr;
 }

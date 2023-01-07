@@ -1,5 +1,19 @@
 .vscode
 
+.gdbinit
+
 *.dSYM
 
 virtuoso
+
+virtualizer/*.swp
+virtualizer/*.o
+virtualizer/location.hh
+virtualizer/position.hh
+virtualizer/stack.hh
+virtualizer/vc_lexer.yy.cc
+virtualizer/vc_parser.output
+virtualizer/vc_parser.tab.cc
+virtualizer/vc_parser.tab.hh
+virtualizer/vcompiler
+virtualizer/build*/

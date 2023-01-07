@@ -7,30 +7,35 @@
 
 using namespace std;
 
+typedef int64_t reg_t;
+
 class ExecutionContext {
 public:
     ExecutionContext(LabelMap *labels);
     int get_lineno(string& label);
 
-    int get_reg_val(string& reg);
-    void put_reg_val(string& reg, int val);
+    reg_t get_reg_val(string& reg);
+    void put_reg_val(string& reg, reg_t val);
     void inc_pc();
-    void set_pc(int new_pc);
-    int get_pc();
+    void set_pc(reg_t new_pc);
+    reg_t get_pc();
     
-    void stack_push(int val);
-    int stack_pop();
+    void stack_push(reg_t val);
+    reg_t stack_pop();
 
-    void set_ra(int new_ra);
-    int get_ra();
+    void set_ra(reg_t new_ra);
+    reg_t get_ra();
 
     void print_regs();
 private:
-    int pc;
-    int sp;
-    vector<int> stack;
-    map<string, int> data_regs;
+    reg_t pc;
+    size_t stack_size;
+    reg_t stack[1000]; 
+    map<string, reg_t> data_regs;
     LabelMap *labels;
+
+    void set_sp(reg_t new_sp);
+    reg_t get_sp();
 };
 
 #endif

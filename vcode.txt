@@ -3,19 +3,24 @@ These are the legal operations in the language:
 push $
 pop $
 mov $ $K
-add $ $K
-sub $ $K
-mul $ $K
-div $ $K
+add $* $K*
+sub $* $K*
+mul $* $K*
+div $* $K*
 jmp @
-jgt @ $K
-jlt @ $K
-jle @ $K
-jge @ $K
+jgt @ $K*
+jlt @ $K*
+jle @ $K*
+jge @ $K*
 jal @
 ret
+load $ *
+store * $K
+new $ $K
+pnt $K*
+pntx $K*
 
-These are the meaning of the argument symbols:
+These are the meanings of the argument symbols:
 
 $: reg
 r0 -> r4, sp, pc, ra
@@ -23,4 +28,8 @@ r0 -> r4, sp, pc, ra
 @: label
 
 K: constant
+
+*: register with address
+
+i.e. jlt takes a label and either a register, constant, or register with address
 
