@@ -97,6 +97,14 @@ public:
     Expr *expr;
 };
 
+class IfElseExpr : public Expr {
+public:
+    IfElseExpr(Expr *condition, ExprList *if_branch, ExprList *else_branch);
+    void accept(Visitor *v) override;
+    Expr *condition;
+    ExprList *if_branch, *else_branch;
+};
+
 class ReturnExpr : public Expr {
 public:
     ReturnExpr(Expr *expr);
@@ -136,6 +144,7 @@ public:
     virtual ~Visitor() = default;
     virtual void visit_assignment_expr(AssignmentExpr *assignment_expr) = 0;
     virtual void visit_fn_call_expr(FunctionCallExpr *fn_call_expr) = 0;
+    virtual void visit_if_else_expr(IfElseExpr *if_else_expr) = 0;
     virtual void visit_math_expr(MathExpr *math_expr) = 0;
     virtual void visit_return_expr(ReturnExpr *return_expr) = 0;
     virtual void visit_print_expr(PrintExpr *print_expr) = 0;
@@ -155,6 +164,7 @@ public:
     PrintingVisitor(ostream &stream);
     void visit_assignment_expr(AssignmentExpr *assignment_expr);
     void visit_fn_call_expr(FunctionCallExpr *fn_call_expr);
+    void visit_if_else_expr(IfElseExpr *if_else_expr);
     void visit_math_expr(MathExpr *math_expr);
     void visit_return_expr(ReturnExpr *return_expr);
     void visit_print_expr(PrintExpr *print_expr);
@@ -207,6 +217,7 @@ class CodeGenVisitor : public Visitor {
 public:
     CodeGenVisitor(ostream &stream, map<string, vector<string>> fn_locals);
     void visit_assignment_expr(AssignmentExpr *assignment_expr);
+    void visit_if_else_expr(IfElseExpr *if_else_expr);
     void visit_fn_call_expr(FunctionCallExpr *fn_call_expr);
     void visit_math_expr(MathExpr *math_expr);
     void visit_return_expr(ReturnExpr *return_expr);
@@ -222,9 +233,11 @@ public:
     void visit_formal_list(FormalList *formal_list);
 private:
     vector<string> get_fn_locals(string fn_name);
+    string fresh_label(string label);
     ostream &stream;
     map<string, vector<string>> fn_locals;
     ScopeStack scopes;
+    map<string, int> labels;
 };
 
 #endif

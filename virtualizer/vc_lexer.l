@@ -39,6 +39,10 @@ using token = VC::VCParser::token;
 
 "print"       {return(token::PRINT);}
 
+"if"          {return(token::IF);}
+
+"else"        {return(token::ELSE);}
+
 [a-zA-Z]+   {
                /**
                 * Section 10.1.5.1 of the 3.0.2 Bison Manual says the 
@@ -66,6 +70,10 @@ using token = VC::VCParser::token;
 \{          {return(token::LBRACKET);}
 
 \}          {return(token::RBRACKET);}
+
+\(          {return(token::LPAREN);}
+
+\)          {return(token::RPAREN);}
 
 \<           {return(token::LFNBRACKET);}
 

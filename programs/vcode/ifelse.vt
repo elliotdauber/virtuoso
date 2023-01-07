@@ -1,0 +1,35 @@
+@main
+mov $fp $sp
+push 0
+push 0
+mov $a0 1
+mov $t0 $fp
+add $t0 0
+store *t0 $a0
+mov $a0 0
+mov $t0 $fp
+add $t0 8
+store *t0 $a0
+mov $t0 $fp
+add $t0 0
+load $a0 *t0
+jeq @else0 $a0
+mov $a0 1
+mov $t0 $fp
+add $t0 8
+store *t0 $a0
+jmp @ifelseend0 $a0
+@else0
+mov $a0 2
+mov $t0 $fp
+add $t0 8
+store *t0 $a0
+@ifelseend0
+mov $t0 $fp
+add $t0 8
+load $a0 *t0
+pnt $a0
+mov $a0 0
+ret
+
+

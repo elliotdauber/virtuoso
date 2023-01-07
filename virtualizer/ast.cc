@@ -1,4 +1,5 @@
 #include <istream>
+#include <sstream>
 #include "ast.hh"
 
 Program::Program() : functions() {}
@@ -54,6 +55,10 @@ void MathExpr::accept(Visitor *v) {v->visit_math_expr(this);}
 FunctionCallExpr::FunctionCallExpr(string fn_name, ArgList *args): fn_name(fn_name), args(args) {}
 void FunctionCallExpr::accept(Visitor *v) {v->visit_fn_call_expr(this);}
 
+IfElseExpr::IfElseExpr(Expr *condition, ExprList *if_branch, ExprList *else_branch) 
+    : condition(condition), if_branch(if_branch), else_branch(else_branch) {}
+void IfElseExpr::accept(Visitor *v) {v->visit_if_else_expr(this);}
+
 ReturnExpr::ReturnExpr(Expr *expr) : expr(expr) {}
 void ReturnExpr::accept(Visitor *v) {v->visit_return_expr(this);}
 
@@ -99,6 +104,18 @@ void PrintingVisitor::visit_fn_call_expr(FunctionCallExpr *fn_call_expr) {
     stream << " ";
     fn_call_expr->args->accept(this);
     stream << ">";
+}
+void PrintingVisitor::visit_if_else_expr(IfElseExpr *if_else_expr) {
+    stream << "if ";
+    if_else_expr->condition->accept(this);
+    stream << " {" << endl;
+    if_else_expr->if_branch->accept(this);
+    stream << "}";
+    if (if_else_expr->else_branch) {
+        stream << " else {" << endl;
+        if_else_expr->else_branch->accept(this);
+        stream << "}";
+    }
 }
 void PrintingVisitor::visit_return_expr(ReturnExpr *return_expr) {
     stream << "return ";
@@ -217,6 +234,24 @@ void CodeGenVisitor::visit_fn_call_expr(FunctionCallExpr *fn_call_expr) {
     stream << "pop $r1" << endl;
     stream << "pop $r0" << endl;
 }
+void CodeGenVisitor::visit_if_else_expr(IfElseExpr *if_else_expr) {
+    if_else_expr->condition->accept(this);
+    if (if_else_expr->else_branch) {
+        string else_label = fresh_label("else");
+        string ifelseend_label = fresh_label("ifelseend");
+        stream << "jeq " << else_label << " $a0" << endl;
+        if_else_expr->if_branch->accept(this);
+        stream << "jmp " << ifelseend_label << " $a0" << endl; //TODO
+        stream << else_label << endl;
+        if_else_expr->else_branch->accept(this);
+        stream << ifelseend_label << endl;
+    } else {
+        string ifend_label = fresh_label("ifend");
+        stream << "jeq " << ifend_label << " $a0" << endl;
+        if_else_expr->if_branch->accept(this);
+        stream << ifend_label << endl;
+    }
+}
 void CodeGenVisitor::visit_return_expr(ReturnExpr *return_expr) {
     return_expr->expr->accept(this);
     stream << "ret" << endl;
@@ -326,6 +361,14 @@ vector<string> CodeGenVisitor::get_fn_locals(string fn_name) {
     return {};
 }
 
+string CodeGenVisitor::fresh_label(string label) {
+    if (!labels.count(label)) {
+        labels[label] = 0;
+    }
+    ostringstream str;
+    str << "@" << label << labels[label]++;
+    return str.str();
+}
 //////////////////////////////////////////////////
 //                     ScopeStack               //
 //////////////////////////////////////////////////

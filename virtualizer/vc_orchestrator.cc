@@ -84,7 +84,7 @@ VC::VCOrchestrator::print(std::ostream &stream)
         vector<string> locals = program->functions[i]->get_locals();
         fn_locals[program->functions[i]->name] = locals;
     }
-
+    // Visitor *v = new PrintingVisitor(stream);
     Visitor *v = new CodeGenVisitor(stream, fn_locals);
     program->accept(v);
     delete(v);

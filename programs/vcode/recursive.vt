@@ -1,0 +1,71 @@
+@factorial
+mov $fp $sp
+mov $t0 $fp
+sub $t0 8
+load $a0 *t0
+jeq @ifend0 $a0
+mov $t0 $fp
+sub $t0 8
+load $a0 *t0
+push $a0
+push $r0
+push $r1
+push $ra
+push $fp
+mov $t0 $fp
+sub $t0 8
+load $a0 *t0
+push $a0
+mov $a0 1
+pop $t0
+sub $t0 $a0
+mov $a0 $t0
+push $a0
+jal @factorial
+pop $t0
+pop $fp
+pop $ra
+pop $r1
+pop $r0
+pop $t0
+mul $t0 $a0
+mov $a0 $t0
+ret
+@ifend0
+mov $a0 1
+ret
+
+
+@main
+mov $fp $sp
+push 0
+push 0
+mov $a0 6
+mov $t0 $fp
+add $t0 0
+store *t0 $a0
+push $r0
+push $r1
+push $ra
+push $fp
+mov $t0 $fp
+add $t0 0
+load $a0 *t0
+push $a0
+jal @factorial
+pop $t0
+pop $fp
+pop $ra
+pop $r1
+pop $r0
+mov $t0 $fp
+add $t0 8
+store *t0 $a0
+mov $t0 $fp
+add $t0 8
+load $a0 *t0
+pnt $a0
+mov $a0 0
+ret
+
+

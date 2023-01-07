@@ -27,6 +27,7 @@
    class ArgList;
    class ReturnExpr;
    class PrintExpr;
+   class IfElseExpr;
 
 
 // The following definitions is missing when %locations isn't used
@@ -70,12 +71,14 @@
 %token               RBRACKET
 %token               LFNBRACKET
 %token               RFNBRACKET
+%token               LPAREN
+%token               RPAREN
 %token               SEMICOLON
 %token               DEF
 %token               RETURN
+%token               IF
+%token               ELSE
 %token               PRINT
-/* %token               COLON
-%token               RARROW */
 %token               ASSIGN
 %token <std::string> OPERATOR
 %token <std::string> INT
@@ -92,6 +95,8 @@
 %type <ArgList*> arg_list
 %type <ReturnExpr*> return_expr
 %type <PrintExpr*> print_expr
+%type <IfElseExpr*> if_else_expr
+%type <ExprList*> else_expr
 
 %%
 
@@ -118,6 +123,8 @@ expr : math_expr {$$ = $1;}
      | assignment {$$ = $1;}
      | return_expr {$$ = $1;}
      | print_expr {$$ = $1;}
+     | if_else_expr {$$ = $1;}
+     | LPAREN expr RPAREN {$$ = $2;}
      | INT {$$ = new Int($1);}
      | ID {$$ = new Var($1);} 
      ;
@@ -140,6 +147,10 @@ assignment : ID ASSIGN expr {$$ = new AssignmentExpr(new Var($1), $3);};
 return_expr : RETURN expr {$$ = new ReturnExpr($2);}
 
 print_expr : PRINT expr {$$ = new PrintExpr($2);}
+
+if_else_expr: IF expr LBRACKET expr_list RBRACKET else_expr {$$ = new IfElseExpr($2, $4, $6);};
+
+else_expr: ELSE LBRACKET expr_list RBRACKET {$$ = $3;} | %empty {$$ = nullptr;};
 
 %%
 

@@ -4,8 +4,6 @@
 #include <string>
 #include <cstddef>
 #include <istream>
-// #include <vector>
-// #include <map>
 
 #include "ast.hh"
 #include "vc_scanner.hh"
